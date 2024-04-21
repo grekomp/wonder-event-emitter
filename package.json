@@ -1,0 +1,41 @@
+{
+  "name": "@grekomp/wonder-event-emitter",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grekomp/wonder-event-emitter.git"
+  },
+  "keywords": [],
+  "author": "Grzegorz Palian <grzegorz.palian@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsc -w",
+    "clean": "rimraf dist",
+    "format": "prettier . --write",
+    "format-check": "prettier . --check",
+    "lint": "eslint . --fix && tsc",
+    "lint-check": "eslint .",
+    "test": "glob \"src/**/*.test.ts\" \"test/**\" -c \"tsx --test\""
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@types/eslint": "^8.56.10",
+    "@types/node": "20.12.7",
+    "@types/nodemon": "1.19.6",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "glob": "10.3.12",
+    "nodemon": "3.1.0",
+    "prettier": "3.2.5",
+    "rimraf": "5.0.5",
+    "tsup": "^8.0.2",
+    "tsx": "4.7.2",
+    "typescript": "5.4.5"
+  }
+}
