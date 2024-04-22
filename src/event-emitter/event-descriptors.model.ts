@@ -28,7 +28,7 @@ export type CombinedEventDictionary = {
 };
 
 export type EventDescriptorFactory<DataType extends object> = (
-  innerPath: string
+  innerPath: string,
 ) => ModuleEventDescriptor<DataType>;
 export type EventDescriptorFactoryDictionary = {
   [key: string]:

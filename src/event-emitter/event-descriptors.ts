@@ -47,13 +47,13 @@ export function defineEventDictionary<
   Dict extends EventDescriptorFactoryDictionary,
 >(
   factoryDictionary: Dict,
-  prefix: string = ""
+  prefix: string = "",
 ): ModuleEventDictionaryFor<Dict> {
   return Object.fromEntries(
     Object.entries(factoryDictionary).map(([key, value]) => {
       if (typeof value === "function") return [key, value(`${prefix}${key}`)];
       return [key, defineEventDictionary(value, `${prefix}${key}.`)];
-    })
+    }),
   ) as ModuleEventDictionaryFor<Dict>;
 }
 
@@ -61,13 +61,13 @@ export function defineCombinedEventDictionary<
   Dict extends ModuleEventDictionary,
 >(
   eventDictionary: Dict,
-  prefix: string = ""
+  prefix: string = "",
 ): CombinedEventDictionaryFor<Dict> {
   return Object.fromEntries(
     Object.entries(eventDictionary).map(([key, value]) => {
       if (eventIdKey in value)
         return [key, { ...value, path: `${prefix}${key}` }];
       return [key, defineCombinedEventDictionary(value, `${prefix}${key}.`)];
-    })
+    }),
   ) as CombinedEventDictionaryFor<Dict>;
 }
