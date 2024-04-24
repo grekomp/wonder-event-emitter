@@ -1,8 +1,10 @@
 import {
+  defineCombinedEventDictionary,
   defineEvent,
   defineEventDictionary,
 } from "src/event-emitter/event-descriptors";
 import {
+  CombinedEventDescriptor,
   ModuleEventDescriptor,
   ModuleEventDictionary,
 } from "src/event-emitter/event-descriptors.model";
@@ -114,6 +116,48 @@ describe("Event descriptors", () => {
       ).toEqualTypeOf<
         ModuleEventDescriptor<{ deeplyNestedEvent2Key: string }>
       >();
+    });
+  });
+
+  describe("defineCombinedEventDictionary", () => {
+    it("should create an object combining multiple event dictionaries", () => {
+      const eventDictionary1 = defineEventDictionary({
+        testEvent1: defineEvent<{ testEvent1Key: string }>(),
+        nestedEvents: {
+          nestedEvent1: defineEvent<{ nestedEvent1Key: string }>(),
+          nestedEvent2: defineEvent<{ nestedEvent2Key: string }>(),
+        },
+      });
+
+      const eventDictionary2 = defineEventDictionary({
+        testEvent2: defineEvent<{ testEvent2Key: string }>(),
+        nestedEvents: {
+          nestedEvent1: defineEvent<{ nestedEvent1Key: string }>(),
+          nestedEvent3: defineEvent<{ nestedEvent3Key: string }>(),
+        },
+      });
+
+      const combinedEventDictionary = defineCombinedEventDictionary({
+        eventDictionary1,
+        eventDictionary2,
+      });
+
+      expectTypeOf(combinedEventDictionary).toEqualTypeOf<{
+        eventDictionary1: {
+          testEvent1: CombinedEventDescriptor<{ testEvent1Key: string }>;
+          nestedEvents: {
+            nestedEvent1: CombinedEventDescriptor<{ nestedEvent1Key: string }>;
+            nestedEvent2: CombinedEventDescriptor<{ nestedEvent2Key: string }>;
+          };
+        };
+        eventDictionary2: {
+          testEvent2: CombinedEventDescriptor<{ testEvent2Key: string }>;
+          nestedEvents: {
+            nestedEvent1: CombinedEventDescriptor<{ nestedEvent1Key: string }>;
+            nestedEvent3: CombinedEventDescriptor<{ nestedEvent3Key: string }>;
+          };
+        };
+      }>();
     });
   });
 });
