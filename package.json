@@ -21,7 +21,8 @@
     "lint": "eslint . && tsc",
     "test": "bun test && vitest --run",
     "test-watch": "bun test --watch",
-    "test-types": "vitest"
+    "test-types": "vitest",
+    "release": "bun run build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
