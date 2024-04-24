@@ -1,5 +1,4 @@
 import {
-  eventIdKey,
   type CombinedEventDictionaryFor,
   type EventDescriptorFactoryDictionary,
   type ModuleEventDescriptor,
@@ -35,12 +34,13 @@ import {
  * @returns A function accepting a single string argument, which will be used as the prefix for the event id.
  */
 export function defineEvent<DataType extends object>() {
-  const eventUuid = crypto.randomUUID();
-  return (innerPath: string) =>
-    ({
-      [eventIdKey]: `${innerPath}__${eventUuid}`,
+  return (innerPath: string) => {
+    const eventUuid = crypto.randomUUID();
+    return {
+      id: `${innerPath}__${eventUuid}`,
       innerPath,
-    }) as ModuleEventDescriptor<DataType>;
+    } as ModuleEventDescriptor<DataType>;
+  };
 }
 
 export function defineEventDictionary<
@@ -65,8 +65,7 @@ export function defineCombinedEventDictionary<
 ): CombinedEventDictionaryFor<Dict> {
   return Object.fromEntries(
     Object.entries(eventDictionary).map(([key, value]) => {
-      if (eventIdKey in value)
-        return [key, { ...value, path: `${prefix}${key}` }];
+      if ("id" in value) return [key, { ...value, path: `${prefix}${key}` }];
       return [key, defineCombinedEventDictionary(value, `${prefix}${key}.`)];
     }),
   ) as CombinedEventDictionaryFor<Dict>;

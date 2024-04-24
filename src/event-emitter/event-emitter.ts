@@ -1,7 +1,4 @@
-import {
-  eventIdKey,
-  type EventDescriptor,
-} from "src/event-emitter/event-descriptors.model";
+import { type EventDescriptor } from "src/event-emitter/event-descriptors.model";
 import type { EventHandler } from "src/event-emitter/event-emitter.model";
 
 export class EventEmitter {
@@ -11,7 +8,7 @@ export class EventEmitter {
     event: EventDescriptor<DataType>,
     callback: EventHandler<DataType>,
   ) {
-    const eventId = event[eventIdKey];
+    const eventId = event.id;
     this.callbacks[eventId] ??= [];
     if (this.callbacks[eventId]?.includes(callback)) return;
 
@@ -21,7 +18,7 @@ export class EventEmitter {
     event: EventDescriptor<DataType>,
     callback: EventHandler<DataType>,
   ) {
-    const eventId = event[eventIdKey];
+    const eventId = event.id;
     const callbacksForEvent = this.callbacks[eventId];
     if (!callbacksForEvent) return;
 
@@ -34,7 +31,7 @@ export class EventEmitter {
     event: EventDescriptor<DataType>,
     data: DataType,
   ) {
-    const eventId = event[eventIdKey];
+    const eventId = event.id;
     this.callbacks[eventId]?.forEach((callback) =>
       (callback as EventHandler<DataType>)(data),
     );

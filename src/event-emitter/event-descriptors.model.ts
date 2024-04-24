@@ -1,11 +1,10 @@
 export const eventDataTypeKey = Symbol("dataType");
-export const eventIdKey = Symbol("id");
 
 export type DataTypeOf<T> =
   T extends EventDescriptor<infer DataType> ? DataType : never;
 
 export interface EventDescriptor<DataType extends object> {
-  [eventIdKey]: string;
+  id: string;
   [eventDataTypeKey]: DataType;
 }
 export interface ModuleEventDescriptor<DataType extends object>
