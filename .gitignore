@@ -137,3 +137,5 @@ bundle
 dist
 node_modules
 TODO
+
+tsconfig.vitest-temp.json
