@@ -1,10 +1,11 @@
 import {
-  type CombinedEventDictionaryFor,
-  type EventDescriptorFactoryDictionary,
-  type ModuleEventDescriptor,
-  type ModuleEventDictionary,
-  type ModuleEventDictionaryFor,
+  EventDescriptor,
+  EventDictionaryFor,
+  EventOrFactoryDictionary,
+  eventDescriptorSymbol,
+  objectTypeSymbol,
 } from "src/event-emitter/event-descriptors.model";
+import { isEventDescriptor } from "src/event-emitter/event-descriptors.utils";
 
 /**
  * Defines a unique event, along with the type of data it should be emitted with.
@@ -34,39 +35,44 @@ import {
  * @returns A function accepting a single string argument, which will be used as the prefix for the event id.
  */
 export function defineEvent<DataType extends object>() {
-  return (innerPath: string) => {
+  return (innerPath: string, outerPath: string) => {
     const eventUuid = crypto.randomUUID();
     return {
+      [objectTypeSymbol]: eventDescriptorSymbol,
+
       id: `${innerPath}__${eventUuid}`,
+      path: outerPath,
       innerPath,
-    } as ModuleEventDescriptor<DataType>;
+    } as EventDescriptor<DataType>;
   };
 }
 
-export function defineEventDictionary<
-  Dict extends EventDescriptorFactoryDictionary,
->(
+export function defineEventDictionary<Dict extends EventOrFactoryDictionary>(
   factoryDictionary: Dict,
-  prefix: string = "",
-): ModuleEventDictionaryFor<Dict> {
+  innerPathPrefix: string = "",
+  pathPrefix: string = "",
+): EventDictionaryFor<Dict> {
   return Object.fromEntries(
     Object.entries(factoryDictionary).map(([key, value]) => {
-      if (typeof value === "function") return [key, value(`${prefix}${key}`)];
-      return [key, defineEventDictionary(value, `${prefix}${key}.`)];
-    }),
-  ) as ModuleEventDictionaryFor<Dict>;
-}
+      if (isEventDescriptor(value))
+        return [key, { ...value, path: `${pathPrefix}${key}` }];
 
-export function defineCombinedEventDictionary<
-  Dict extends ModuleEventDictionary,
->(
-  eventDictionary: Dict,
-  prefix: string = "",
-): CombinedEventDictionaryFor<Dict> {
-  return Object.fromEntries(
-    Object.entries(eventDictionary).map(([key, value]) => {
-      if ("id" in value) return [key, { ...value, path: `${prefix}${key}` }];
-      return [key, defineCombinedEventDictionary(value, `${prefix}${key}.`)];
+      if (typeof value === "function")
+        return [
+          key,
+          value(`${innerPathPrefix}${key}`, `${innerPathPrefix}${key}`),
+        ];
+
+      if (typeof value === "object")
+        return [
+          key,
+          defineEventDictionary(
+            value,
+            `${innerPathPrefix}${key}.`,
+            `${pathPrefix}${key}.`,
+          ),
+        ];
+      return [key, value];
     }),
-  ) as CombinedEventDictionaryFor<Dict>;
+  ) as EventDictionaryFor<Dict>;
 }

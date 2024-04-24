@@ -1,12 +1,10 @@
 import {
-  defineCombinedEventDictionary,
   defineEvent,
   defineEventDictionary,
 } from "src/event-emitter/event-descriptors";
 import {
-  CombinedEventDescriptor,
-  ModuleEventDescriptor,
-  ModuleEventDictionary,
+  EventDescriptor,
+  EventDictionary,
 } from "src/event-emitter/event-descriptors.model";
 import { describe, expectTypeOf, it } from "vitest";
 
@@ -16,10 +14,11 @@ describe("Event descriptors", () => {
       const eventDescriptionFactory = defineEvent();
       expectTypeOf(eventDescriptionFactory).toBeFunction();
 
-      const eventDescription = eventDescriptionFactory("testEventPath");
-      expectTypeOf(eventDescription).toEqualTypeOf<
-        ModuleEventDescriptor<object>
-      >();
+      const eventDescription = eventDescriptionFactory(
+        "testEventInnerPath",
+        "testEventOuterPath",
+      );
+      expectTypeOf(eventDescription).toEqualTypeOf<EventDescriptor<object>>();
     });
 
     it("dataType should be set to the generic argument passed to defineEvent", () => {
@@ -29,9 +28,12 @@ describe("Event descriptors", () => {
       }>();
       expectTypeOf(eventDescriptionFactory).toBeFunction();
 
-      const eventDescription = eventDescriptionFactory("testEventPath");
+      const eventDescription = eventDescriptionFactory(
+        "testEventInnerPath",
+        "testEventOuterPath",
+      );
       expectTypeOf(eventDescription).toEqualTypeOf<
-        ModuleEventDescriptor<{ testString: string; testNumber: number }>
+        EventDescriptor<{ testString: string; testNumber: number }>
       >();
     });
 
@@ -40,14 +42,20 @@ describe("Event descriptors", () => {
         testString: string;
         testNumber: number;
       }>();
-      const eventDescription1 = eventDescriptionFactory("testEventPath1");
-      const eventDescription2 = eventDescriptionFactory("testEventPath2");
+      const eventDescription1 = eventDescriptionFactory(
+        "testEventInnerPath1",
+        "testEventOuterPath",
+      );
+      const eventDescription2 = eventDescriptionFactory(
+        "testEventInnerPath2",
+        "testEventOuterPath",
+      );
 
       expectTypeOf(eventDescription1).toEqualTypeOf<
-        ModuleEventDescriptor<{ testString: string; testNumber: number }>
+        EventDescriptor<{ testString: string; testNumber: number }>
       >();
       expectTypeOf(eventDescription2).toEqualTypeOf<
-        ModuleEventDescriptor<{ testString: string; testNumber: number }>
+        EventDescriptor<{ testString: string; testNumber: number }>
       >();
       expectTypeOf(eventDescription1).toEqualTypeOf(eventDescription2);
     });
@@ -61,14 +69,20 @@ describe("Event descriptors", () => {
         testString2: string;
         testNumber2: number;
       }>();
-      const eventDescription1 = eventDescriptionFactory1("testEventPath1");
-      const eventDescription2 = eventDescriptionFactory2("testEventPath2");
+      const eventDescription1 = eventDescriptionFactory1(
+        "testEventInnerPath1",
+        "testEventOuterPath",
+      );
+      const eventDescription2 = eventDescriptionFactory2(
+        "testEventInnerPath2",
+        "testEventOuterPath",
+      );
 
       expectTypeOf(eventDescription1).toEqualTypeOf<
-        ModuleEventDescriptor<{ testString1: string; testNumber1: number }>
+        EventDescriptor<{ testString1: string; testNumber1: number }>
       >();
       expectTypeOf(eventDescription2).toEqualTypeOf<
-        ModuleEventDescriptor<{ testString2: string; testNumber2: number }>
+        EventDescriptor<{ testString2: string; testNumber2: number }>
       >();
       expectTypeOf(eventDescription1).not.toEqualTypeOf(eventDescription2);
     });
@@ -93,29 +107,25 @@ describe("Event descriptors", () => {
       });
 
       expectTypeOf(eventDictionary).toBeObject();
-      expectTypeOf(eventDictionary).toMatchTypeOf<ModuleEventDictionary>();
+      expectTypeOf(eventDictionary).toMatchTypeOf<EventDictionary>();
       expectTypeOf(eventDictionary.rootEvent).toEqualTypeOf<
-        ModuleEventDescriptor<{ rootEventKey: string }>
+        EventDescriptor<{ rootEventKey: string }>
       >();
       expectTypeOf(
         eventDictionary.nestedEvents,
-      ).toMatchTypeOf<ModuleEventDictionary>();
+      ).toMatchTypeOf<EventDictionary>();
       expectTypeOf(eventDictionary.nestedEvents.nestedEvent1).toEqualTypeOf<
-        ModuleEventDescriptor<{ nestedEvent1Key: string }>
+        EventDescriptor<{ nestedEvent1Key: string }>
       >();
       expectTypeOf(eventDictionary.nestedEvents.nestedEvent2).toEqualTypeOf<
-        ModuleEventDescriptor<{ nestedEvent2Key: string }>
+        EventDescriptor<{ nestedEvent2Key: string }>
       >();
       expectTypeOf(
         eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent1,
-      ).toEqualTypeOf<
-        ModuleEventDescriptor<{ deeplyNestedEvent1Key: string }>
-      >();
+      ).toEqualTypeOf<EventDescriptor<{ deeplyNestedEvent1Key: string }>>();
       expectTypeOf(
         eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent2,
-      ).toEqualTypeOf<
-        ModuleEventDescriptor<{ deeplyNestedEvent2Key: string }>
-      >();
+      ).toEqualTypeOf<EventDescriptor<{ deeplyNestedEvent2Key: string }>>();
     });
   });
 
@@ -137,24 +147,24 @@ describe("Event descriptors", () => {
         },
       });
 
-      const combinedEventDictionary = defineCombinedEventDictionary({
+      const combinedEventDictionary = defineEventDictionary({
         eventDictionary1,
         eventDictionary2,
       });
 
       expectTypeOf(combinedEventDictionary).toEqualTypeOf<{
         eventDictionary1: {
-          testEvent1: CombinedEventDescriptor<{ testEvent1Key: string }>;
+          testEvent1: EventDescriptor<{ testEvent1Key: string }>;
           nestedEvents: {
-            nestedEvent1: CombinedEventDescriptor<{ nestedEvent1Key: string }>;
-            nestedEvent2: CombinedEventDescriptor<{ nestedEvent2Key: string }>;
+            nestedEvent1: EventDescriptor<{ nestedEvent1Key: string }>;
+            nestedEvent2: EventDescriptor<{ nestedEvent2Key: string }>;
           };
         };
         eventDictionary2: {
-          testEvent2: CombinedEventDescriptor<{ testEvent2Key: string }>;
+          testEvent2: EventDescriptor<{ testEvent2Key: string }>;
           nestedEvents: {
-            nestedEvent1: CombinedEventDescriptor<{ nestedEvent1Key: string }>;
-            nestedEvent3: CombinedEventDescriptor<{ nestedEvent3Key: string }>;
+            nestedEvent1: EventDescriptor<{ nestedEvent1Key: string }>;
+            nestedEvent3: EventDescriptor<{ nestedEvent3Key: string }>;
           };
         };
       }>();

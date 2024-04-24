@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
-  defineCombinedEventDictionary,
   defineEvent,
   defineEventDictionary,
 } from "src/event-emitter/event-descriptors";
+import {
+  eventDescriptorSymbol,
+  objectTypeSymbol,
+} from "src/event-emitter/event-descriptors.model";
 import { describe, expect, it } from "vitest";
 
 describe("Event descriptors", () => {
@@ -12,31 +15,44 @@ describe("Event descriptors", () => {
       const eventDescriptionFactory = defineEvent();
       expect(typeof eventDescriptionFactory).toBe("function");
 
-      const eventDescription = eventDescriptionFactory("testEventPath");
+      const eventDescription = eventDescriptionFactory(
+        "testEventInnerPath",
+        "testEventOuterPath",
+      );
 
-      expect(typeof eventDescription).toBe("object");
-      expect(eventDescription).toHaveProperty("innerPath", "testEventPath");
+      expect(eventDescription).toEqual({
+        [objectTypeSymbol]: eventDescriptorSymbol,
+        id: expect.any(String),
+        innerPath: "testEventInnerPath",
+        path: "testEventOuterPath",
+      });
     });
 
-    it("should return a function that allows you to create multiple event definitions", () => {
+    it("should return a function that allows you to create multiple unique event definitions", () => {
       const eventDescriptionFactory = defineEvent();
-      const eventDescription1 = eventDescriptionFactory("testEventPath1");
-      const eventDescription2 = eventDescriptionFactory("testEventPath2");
+      const eventDescription1 = eventDescriptionFactory(
+        "testEventInnerPath1",
+        "testEventOuterPath1",
+      );
+      const eventDescription2 = eventDescriptionFactory(
+        "testEventInnerPath2",
+        "testEventOuterPath2",
+      );
 
-      expect(eventDescription1).toHaveProperty("innerPath", "testEventPath1");
-      expect(eventDescription2).toHaveProperty("innerPath", "testEventPath2");
+      expect(eventDescription1).toEqual({
+        [objectTypeSymbol]: eventDescriptorSymbol,
+        id: expect.any(String),
+        innerPath: "testEventInnerPath1",
+        path: "testEventOuterPath1",
+      });
+      expect(eventDescription2).toEqual({
+        [objectTypeSymbol]: eventDescriptorSymbol,
+        id: expect.any(String),
+        innerPath: "testEventInnerPath2",
+        path: "testEventOuterPath2",
+      });
 
       expect(eventDescription1).not.toBe(eventDescription2);
-    });
-
-    it("should return a function that creates unique event definitions", () => {
-      const eventDescriptionFactory = defineEvent();
-      const eventDescription1 = eventDescriptionFactory("testEventPath");
-      const eventDescription2 = eventDescriptionFactory("testEventPath");
-
-      expect(eventDescription1).toHaveProperty("innerPath", "testEventPath");
-      expect(eventDescription2).toHaveProperty("innerPath", "testEventPath");
-
       expect(eventDescription1).not.toEqual(eventDescription2);
     });
   });
@@ -50,12 +66,16 @@ describe("Event descriptors", () => {
 
       expect(eventDictionary).toEqual({
         testEvent1: {
+          [objectTypeSymbol]: eventDescriptorSymbol,
           id: expect.any(String),
           innerPath: "testEvent1",
+          path: "testEvent1",
         },
         testEvent2: {
+          [objectTypeSymbol]: eventDescriptorSymbol,
           id: expect.any(String),
           innerPath: "testEvent2",
+          path: "testEvent2",
         },
       });
     });
@@ -75,34 +95,42 @@ describe("Event descriptors", () => {
 
       expect(eventDictionary).toEqual({
         rootEvent: {
+          [objectTypeSymbol]: eventDescriptorSymbol,
           id: expect.any(String),
           innerPath: "rootEvent",
+          path: "rootEvent",
         },
         nestedEvents: {
           nestedEvent1: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "nestedEvents.nestedEvent1",
+            path: "nestedEvents.nestedEvent1",
           },
           nestedEvent2: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "nestedEvents.nestedEvent2",
+            path: "nestedEvents.nestedEvent2",
           },
           deeplyNestedEvents: {
             deeplyNestedEvent1: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
+              path: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
             },
             deeplyNestedEvent2: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent2",
+              path: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent2",
             },
           },
         },
       });
     });
-  });
 
-  describe("defineCombinedEventDictionary", () => {
     it("should create an object combining multiple event dictionaries", () => {
       const eventDictionary1 = defineEventDictionary({
         testEvent1: defineEvent(),
@@ -113,7 +141,7 @@ describe("Event descriptors", () => {
         testEvent4: defineEvent(),
       });
 
-      const combinedEventDictionary = defineCombinedEventDictionary({
+      const combinedEventDictionary = defineEventDictionary({
         eventDictionary1,
         eventDictionary2,
       });
@@ -121,11 +149,13 @@ describe("Event descriptors", () => {
       expect(combinedEventDictionary).toEqual({
         eventDictionary1: {
           testEvent1: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "testEvent1",
             path: "eventDictionary1.testEvent1",
           },
           testEvent2: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "testEvent2",
             path: "eventDictionary1.testEvent2",
@@ -133,11 +163,13 @@ describe("Event descriptors", () => {
         },
         eventDictionary2: {
           testEvent3: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "testEvent3",
             path: "eventDictionary2.testEvent3",
           },
           testEvent4: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "testEvent4",
             path: "eventDictionary2.testEvent4",
@@ -146,7 +178,7 @@ describe("Event descriptors", () => {
       });
     });
 
-    it("should support nested objects in the event dictionary", () => {
+    it("should support combining dictionaries with nested objects", () => {
       const eventDictionary1 = defineEventDictionary({
         rootEvent: defineEvent(),
         nestedEvents: {
@@ -176,7 +208,7 @@ describe("Event descriptors", () => {
         testEvent2: defineEvent(),
       });
 
-      const combinedEventDictionary = defineCombinedEventDictionary({
+      const combinedEventDictionary = defineEventDictionary({
         eventDictionary1,
         nestedDictionary: {
           eventDictionary2,
@@ -187,28 +219,33 @@ describe("Event descriptors", () => {
       expect(combinedEventDictionary).toEqual({
         eventDictionary1: {
           rootEvent: {
+            [objectTypeSymbol]: eventDescriptorSymbol,
             id: expect.any(String),
             innerPath: "rootEvent",
             path: "eventDictionary1.rootEvent",
           },
           nestedEvents: {
             nestedEvent1: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "nestedEvents.nestedEvent1",
               path: "eventDictionary1.nestedEvents.nestedEvent1",
             },
             nestedEvent2: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "nestedEvents.nestedEvent2",
               path: "eventDictionary1.nestedEvents.nestedEvent2",
             },
             deeplyNestedEvents: {
               deeplyNestedEvent1: {
+                [objectTypeSymbol]: eventDescriptorSymbol,
                 id: expect.any(String),
                 innerPath: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
                 path: "eventDictionary1.nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
               },
               deeplyNestedEvent2: {
+                [objectTypeSymbol]: eventDescriptorSymbol,
                 id: expect.any(String),
                 innerPath: "nestedEvents.deeplyNestedEvents.deeplyNestedEvent2",
                 path: "eventDictionary1.nestedEvents.deeplyNestedEvents.deeplyNestedEvent2",
@@ -219,29 +256,34 @@ describe("Event descriptors", () => {
         nestedDictionary: {
           eventDictionary2: {
             otherRootEvent: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "otherRootEvent",
               path: "nestedDictionary.eventDictionary2.otherRootEvent",
             },
             nestedEvents: {
               nestedEvent3: {
+                [objectTypeSymbol]: eventDescriptorSymbol,
                 id: expect.any(String),
                 innerPath: "nestedEvents.nestedEvent3",
                 path: "nestedDictionary.eventDictionary2.nestedEvents.nestedEvent3",
               },
               nestedEvent4: {
+                [objectTypeSymbol]: eventDescriptorSymbol,
                 id: expect.any(String),
                 innerPath: "nestedEvents.nestedEvent4",
                 path: "nestedDictionary.eventDictionary2.nestedEvents.nestedEvent4",
               },
               deeplyNestedEvents: {
                 deeplyNestedEvent1: {
+                  [objectTypeSymbol]: eventDescriptorSymbol,
                   id: expect.any(String),
                   innerPath:
                     "nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
                   path: "nestedDictionary.eventDictionary2.nestedEvents.deeplyNestedEvents.deeplyNestedEvent1",
                 },
                 deeplyNestedEvent2: {
+                  [objectTypeSymbol]: eventDescriptorSymbol,
                   id: expect.any(String),
                   innerPath:
                     "nestedEvents.deeplyNestedEvents.deeplyNestedEvent2",
@@ -252,11 +294,13 @@ describe("Event descriptors", () => {
           },
           eventDictionary3: {
             testEvent1: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "testEvent1",
               path: "nestedDictionary.eventDictionary3.testEvent1",
             },
             testEvent2: {
+              [objectTypeSymbol]: eventDescriptorSymbol,
               id: expect.any(String),
               innerPath: "testEvent2",
               path: "nestedDictionary.eventDictionary3.testEvent2",

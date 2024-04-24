@@ -1,6 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
 import {
-  defineCombinedEventDictionary,
   defineEvent,
   defineEventDictionary,
 } from "src/event-emitter/event-descriptors";
@@ -13,7 +12,8 @@ describe("EventEmitter", () => {
     const handlerToBeCalledOnce = mock();
     const handlerToBeCalledTwice = mock();
     const testEventDescription = defineEvent<{ testEventData: string }>()(
-      "testEvent",
+      "testEventInnerPath",
+      "testEventOuterPath",
     );
 
     eventEmitter.on(testEventDescription, handlerToBeCalledOnce);
@@ -83,7 +83,7 @@ describe("EventEmitter", () => {
     const moduleEventDictionary = defineEventDictionary({
       moduleEvent: defineEvent<{ moduleEventData: string }>(),
     });
-    const combinedEventDictionary = defineCombinedEventDictionary({
+    const combinedEventDictionary = defineEventDictionary({
       moduleEvents: moduleEventDictionary,
     });
 

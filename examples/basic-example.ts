@@ -1,9 +1,4 @@
-import {
-  defineCombinedEventDictionary,
-  defineEvent,
-  defineEventDictionary,
-  WonderEventEmitter,
-} from "../src";
+import { defineEvent, defineEventDictionary, WonderEventEmitter } from "../src";
 
 // Create an instance of the event emitter anywhere
 const eventEmitter = new WonderEventEmitter();
@@ -46,7 +41,7 @@ eventEmitter.on(calendarModuleEvents.events.added, (data) =>
 );
 
 // Or combine them into a single dictionary
-const combinedEvents = defineCombinedEventDictionary({
+const combinedEvents = defineEventDictionary({
   todoApp: todoAppEvents,
   calendarModule: calendarModuleEvents,
 });
