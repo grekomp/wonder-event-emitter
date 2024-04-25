@@ -96,7 +96,7 @@ eventEmitter.on(calendarModuleEvents.events.added, (data) =>
 );
 
 // Or combine them into a single dictionary
-const combinedEvents = defineCombinedEventDictionary({
+const combinedEvents = defineEventDictionary({
   todoApp: todoAppEvents,
   calendarModule: calendarModuleEvents,
 });
