@@ -22,7 +22,7 @@
     "test": "bun test && vitest --run",
     "test-watch": "bun test --watch",
     "test-types": "vitest",
-    "release": "bun run build && changeset publish"
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
