@@ -1,9 +1,9 @@
 {
   "name": "@grekomp/wonder-event-emitter",
   "version": "0.0.1",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "typings": "dist/index.d.ts",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "type": "module",
   "repository": {
     "type": "git",
