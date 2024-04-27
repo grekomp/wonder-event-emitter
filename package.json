@@ -22,6 +22,8 @@
     "test": "bun test && vitest --run",
     "test-watch": "bun test --watch",
     "test-types": "vitest",
+    "changeset": "changeset",
+    "version": "changeset version",
     "release": "changeset publish"
   },
   "devDependencies": {
