@@ -1,5 +1,12 @@
 # @grekomp/wonder-event-emitter
 
+## 0.1.1
+
+### Patch Changes
+
+- 7490947: Fixed typo in publish workflow
+- 7a81007: Updated publish github workflow to build the code before publishing
+
 ## 0.1.0
 
 ### Minor Changes
