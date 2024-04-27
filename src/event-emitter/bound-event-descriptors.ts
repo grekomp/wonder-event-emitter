@@ -15,8 +15,8 @@ export function bindEvent<DataType extends object>(
 ): BoundEventDescriptor<DataType> {
   return {
     ...eventDescriptor,
-    on: (listener) => emitter.on(eventDescriptor, listener),
-    off: (listener) => emitter.off(eventDescriptor, listener),
+    on: (callback) => emitter.on(eventDescriptor, callback),
+    off: (callback) => emitter.off(eventDescriptor, callback),
     emit: (data) => emitter.emit(eventDescriptor, data),
   };
 }

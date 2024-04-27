@@ -2,11 +2,12 @@ import {
   EventDescriptor,
   EventDictionary,
 } from "src/event-emitter/event-descriptors.model";
+import { EventHandler } from "src/event-emitter/event-emitter.model";
 
 export interface BoundEventDescriptor<DataType extends object>
   extends EventDescriptor<DataType> {
-  on(listener: (data: DataType) => void): void;
-  off(listener: (data: DataType) => void): void;
+  on(callback: EventHandler<DataType>): void;
+  off(callback: EventHandler<DataType>): void;
   emit(data: DataType): void;
 }
 
