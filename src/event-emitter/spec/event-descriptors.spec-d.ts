@@ -16,7 +16,7 @@ describe("Event descriptors", () => {
 
       const eventDescription = eventDescriptionFactory(
         "testEventInnerPath",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
       expectTypeOf(eventDescription).toEqualTypeOf<EventDescriptor<object>>();
     });
@@ -30,7 +30,7 @@ describe("Event descriptors", () => {
 
       const eventDescription = eventDescriptionFactory(
         "testEventInnerPath",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
       expectTypeOf(eventDescription).toEqualTypeOf<
         EventDescriptor<{ testString: string; testNumber: number }>
@@ -44,11 +44,11 @@ describe("Event descriptors", () => {
       }>();
       const eventDescription1 = eventDescriptionFactory(
         "testEventInnerPath1",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
       const eventDescription2 = eventDescriptionFactory(
         "testEventInnerPath2",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
 
       expectTypeOf(eventDescription1).toEqualTypeOf<
@@ -71,11 +71,11 @@ describe("Event descriptors", () => {
       }>();
       const eventDescription1 = eventDescriptionFactory1(
         "testEventInnerPath1",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
       const eventDescription2 = eventDescriptionFactory2(
         "testEventInnerPath2",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
 
       expectTypeOf(eventDescription1).toEqualTypeOf<
@@ -112,7 +112,7 @@ describe("Event descriptors", () => {
         EventDescriptor<{ rootEventKey: string }>
       >();
       expectTypeOf(
-        eventDictionary.nestedEvents,
+        eventDictionary.nestedEvents
       ).toMatchTypeOf<EventDictionary>();
       expectTypeOf(eventDictionary.nestedEvents.nestedEvent1).toEqualTypeOf<
         EventDescriptor<{ nestedEvent1Key: string }>
@@ -121,15 +121,13 @@ describe("Event descriptors", () => {
         EventDescriptor<{ nestedEvent2Key: string }>
       >();
       expectTypeOf(
-        eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent1,
+        eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent1
       ).toEqualTypeOf<EventDescriptor<{ deeplyNestedEvent1Key: string }>>();
       expectTypeOf(
-        eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent2,
+        eventDictionary.nestedEvents.deeplyNestedEvents.deeplyNestedEvent2
       ).toEqualTypeOf<EventDescriptor<{ deeplyNestedEvent2Key: string }>>();
     });
-  });
 
-  describe("defineCombinedEventDictionary", () => {
     it("should create an object combining multiple event dictionaries", () => {
       const eventDictionary1 = defineEventDictionary({
         testEvent1: defineEvent<{ testEvent1Key: string }>(),

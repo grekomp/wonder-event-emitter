@@ -20,7 +20,7 @@ export type EventDictionary = {
 
 export type EventDescriptorFactory<DataType extends object> = (
   innerPath: string,
-  outerPath: string,
+  outerPath: string
 ) => EventDescriptor<DataType>;
 export type EventDescriptorFactoryDictionary = {
   [key: string]:
@@ -36,12 +36,14 @@ export type EventOrFactoryDictionary = {
 };
 
 export type EventDictionaryFor<FactoryDict extends EventOrFactoryDictionary> = {
-  [Key in keyof FactoryDict]: FactoryDict[Key] extends EventOrFactoryDictionary
-    ? EventDictionaryFor<FactoryDict[Key]>
-    : FactoryDict[Key] extends EventDescriptorFactory<infer DataType>
+  [Key in keyof FactoryDict]: FactoryDict[Key] extends EventDescriptorFactory<
+    infer DataType
+  >
+    ? EventDescriptor<DataType>
+    : FactoryDict[Key] extends EventDescriptor<infer DataType>
       ? EventDescriptor<DataType>
-      : FactoryDict[Key] extends EventDescriptor<infer DataType>
-        ? EventDescriptor<DataType>
+      : FactoryDict[Key] extends EventOrFactoryDictionary
+        ? EventDictionaryFor<FactoryDict[Key]>
         : never;
 };
 

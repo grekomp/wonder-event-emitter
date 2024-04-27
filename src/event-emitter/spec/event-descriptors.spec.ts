@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { describe, expect, it } from "bun:test";
 import {
   defineEvent,
   defineEventDictionary,
 } from "src/event-emitter/event-descriptors";
 import {
+  EventDescriptor,
+  EventDictionaryFor,
   eventDescriptorSymbol,
   objectTypeSymbol,
 } from "src/event-emitter/event-descriptors.model";
-import { describe, expect, it } from "vitest";
 
 describe("Event descriptors", () => {
   describe("defineEvent", () => {
@@ -17,7 +19,7 @@ describe("Event descriptors", () => {
 
       const eventDescription = eventDescriptionFactory(
         "testEventInnerPath",
-        "testEventOuterPath",
+        "testEventOuterPath"
       );
 
       expect(eventDescription).toEqual({
@@ -25,18 +27,18 @@ describe("Event descriptors", () => {
         id: expect.any(String),
         innerPath: "testEventInnerPath",
         path: "testEventOuterPath",
-      });
+      } as EventDescriptor<object>);
     });
 
     it("should return a function that allows you to create multiple unique event definitions", () => {
       const eventDescriptionFactory = defineEvent();
       const eventDescription1 = eventDescriptionFactory(
         "testEventInnerPath1",
-        "testEventOuterPath1",
+        "testEventOuterPath1"
       );
       const eventDescription2 = eventDescriptionFactory(
         "testEventInnerPath2",
-        "testEventOuterPath2",
+        "testEventOuterPath2"
       );
 
       expect(eventDescription1).toEqual({
@@ -44,13 +46,13 @@ describe("Event descriptors", () => {
         id: expect.any(String),
         innerPath: "testEventInnerPath1",
         path: "testEventOuterPath1",
-      });
+      } as EventDescriptor<object>);
       expect(eventDescription2).toEqual({
         [objectTypeSymbol]: eventDescriptorSymbol,
         id: expect.any(String),
         innerPath: "testEventInnerPath2",
         path: "testEventOuterPath2",
-      });
+      } as EventDescriptor<object>);
 
       expect(eventDescription1).not.toBe(eventDescription2);
       expect(eventDescription1).not.toEqual(eventDescription2);
@@ -77,7 +79,7 @@ describe("Event descriptors", () => {
           innerPath: "testEvent2",
           path: "testEvent2",
         },
-      });
+      } as EventDictionaryFor<typeof eventDictionary>);
     });
 
     it("should support nested objects in the event dictionary", () => {
@@ -128,7 +130,7 @@ describe("Event descriptors", () => {
             },
           },
         },
-      });
+      } as EventDictionaryFor<typeof eventDictionary>);
     });
 
     it("should create an object combining multiple event dictionaries", () => {
@@ -175,7 +177,7 @@ describe("Event descriptors", () => {
             path: "eventDictionary2.testEvent4",
           },
         },
-      });
+      } as EventDictionaryFor<typeof combinedEventDictionary>);
     });
 
     it("should support combining dictionaries with nested objects", () => {
@@ -307,7 +309,7 @@ describe("Event descriptors", () => {
             },
           },
         },
-      });
+      } as EventDictionaryFor<typeof combinedEventDictionary>);
     });
   });
 });
