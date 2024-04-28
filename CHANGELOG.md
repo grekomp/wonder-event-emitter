@@ -1,5 +1,11 @@
 # @grekomp/wonder-event-emitter
 
+## 0.1.2
+
+### Patch Changes
+
+- 1e8c3a1: Added bound events to entrypoint
+
 ## 0.1.1
 
 ### Patch Changes
